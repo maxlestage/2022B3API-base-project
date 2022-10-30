@@ -1,12 +1,16 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import {TypeOrmModule} from '@nestjs/typeorm';
-
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersController } from './users/controllers/users.controller';
+import { UserDto } from './users/dto/user.dto';
+import { User } from './users/user.entity';
+import { UsersModule } from './users/user.module';
+import { UsersService } from './users/user.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({isGlobal: true}),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -22,7 +26,7 @@ import {TypeOrmModule} from '@nestjs/typeorm';
       inject: [ConfigService],
     }),
   ],
-  controllers: [],
-  providers: [],
+  controllers: [UsersController],
+  providers: [UsersModule, UsersService],
 })
 export class AppModule {}
