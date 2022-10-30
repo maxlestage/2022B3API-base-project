@@ -1,0 +1,3 @@
+[submodule "src/test"]
+	path = src/test
+	url = git@github.com:Wikodit/2022B3API-testing.git
