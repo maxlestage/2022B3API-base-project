@@ -155,7 +155,7 @@ export class DayOneTesting extends BaseRouteTesting {
         });
 
         // Get Users id
-        describe('get /users/:id/meal-vouchers/:month', () => {
+        /*  describe('get /users/:id/meal-vouchers/:month', () => {
           this.itu('should return 400', async () => {
             return this.findById('id').expectStatus(400);
           });
@@ -183,7 +183,7 @@ export class DayOneTesting extends BaseRouteTesting {
                 },
               });
           });
-        });
+        }); */
       });
     });
   }

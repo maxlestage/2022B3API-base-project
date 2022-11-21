@@ -3,9 +3,9 @@
 <img src="logo.png"
      style="float: left; width: 80px; position: absolute; right: 0; top: 20px; margin-right: 20px;" />
 
-**Contexte** : Vous venez d'être embauché au sein d'une petite société de service bordelaise. Malgré un bon fonctionnement général et suite aux différentes crises sanitaires, votre entreprise peine à trouver une organisation de planning satisfaisante. Elle décide donc de vous mettre sur le coup guidé par un lead-developper afin de construire un portail interne de gestion de calendrier. Cette application aura pour but de gérer les jours de télétravail et de congés de toute l'entreprise. 
+**Contexte** : Vous venez d'être embauché au sein d'une petite société de service bordelaise. Malgré un bon fonctionnement général et suite aux différentes crises sanitaires, votre entreprise peine à trouver une organisation de planning satisfaisante. Elle décide donc de vous mettre sur le coup guidé par un lead-developper afin de construire un portail interne de gestion de calendrier. Cette application aura pour but de gérer les jours de télétravail et de congés de toute l'entreprise.
 
-**Consignes de depart** : Ce document fait office de cahier des charges et sera une référence tout au long du projet. Vous trouverez ci-dessous une liste exhaustive des models et des routes à implémenter. L'organisation du code source est libre, **CEPENDANT** l'organisation de code recommandée par NestJS est FORTEMENT recommandée. Votre notation sera basée sur le nombre de tests qui passent avec succès et sera ponderée par votre style de code (propreté, intelligence de code, conventions de nommage, ...). Tout au long de ce document, vous trouverez des notes apportées par votre supérieur, lead-developper qui vous donnera le format de retour ou des types d'erreurs à retourner. 
+**Consignes de depart** : Ce document fait office de cahier des charges et sera une référence tout au long du projet. Vous trouverez ci-dessous une liste exhaustive des models et des routes à implémenter. L'organisation du code source est libre, **CEPENDANT** l'organisation de code recommandée par NestJS est FORTEMENT recommandée. Votre notation sera basée sur le nombre de tests qui passent avec succès et sera ponderée par votre style de code (propreté, intelligence de code, conventions de nommage, ...). Tout au long de ce document, vous trouverez des notes apportées par votre supérieur, lead-developper qui vous donnera le format de retour ou des types d'erreurs à retourner.
 **Tout plagiat sera fortement sanctionné par une note de 0 à la fin du module.**
 
 Vous trouverez toutes les informations nécessaires à l'installation du projet et au lancement des tests dans le fichier `README.md`.
@@ -15,7 +15,7 @@ Vous trouverez toutes les informations nécessaires à l'installation du projet 
 Vous trouverez ci-dessous une liste exhaustive des differents models à implémenter pour réaliser ce projet. Chaque model sera décrit par ses propriétés, et, chacune d'elles seront définies par leurs types et par un `!` ou un `?` selon si elles sont respectivement requises ou optionnelles pour traiter l'entité. De plus dans le cas où la propriété est optionnelle, lorsqu'une valeur par defaut sera à attribuer cette valeur sera expressement précisée.
 Note : Ces models seront donnés sous forme de classe avec le strict minimum d'informations. Il ne faudra pas simplement copier-coller ces blocs de code pour que cela fonctionne.
 
-### user.entity.ts
+### user.entity.ts ✅
 
 ```ts
 class User {
@@ -23,11 +23,12 @@ class User {
   public username!: string; // cette propriété doit porter une contrainte d'unicité
   public email!: string; // cette propriété doit porter une contrainte d'unicité
   public password!: string;
-  public role!: 'Employee' | 'Admin' | 'ProjectManager' // valeur par defaut : 'Employee'
+  public role!: 'Employee' | 'Admin' | 'ProjectManager'; // valeur par defaut : 'Employee'
 }
 ```
 
-### project.entity.ts
+### project.entity.ts ✅
+
 ```ts
 class Project {
   public id!: string; //au format uuidv4
@@ -36,42 +37,44 @@ class Project {
 }
 ```
 
-### project-user.entity.ts
+### project-user.entity.ts ✅
+
 ```ts
 class ProjectUser {
   public id!: string; //au format uuidv4
-  public startDate!: Date; 
-  public endDate!: Date; 
+  public startDate!: Date;
+  public endDate!: Date;
   public projectId!: string; //au format uuidv4
   public userId!: string; //au format uuidv4
 }
 ```
 
-### event.entity.ts
+### event.entity.ts ✅
+
 ```ts
 class Event {
   public id!: string; //au format uuidv4
   public date!: Date;
-  public eventStatus?: 'Pending' | 'Accepted' | 'Declined' // valeur par défaut : 'Pending';
+  public eventStatus?: 'Pending' | 'Accepted' | 'Declined'; // valeur par défaut : 'Pending';
   public eventType!: 'RemoteWork' | 'PaidLeave';
   public eventDescription?: string;
   public userId!: string; //au format uuidv4
 }
 ```
 
-## Routes 
+## Routes
 
 Vous trouverez ci-dessous une liste exhaustive des différentes routes à intégrer organisées par model cible pour réaliser ce projet. A chaque route sera associé une description métier de la route fournie par votre employeur ainsi que, si nécessaire, une note du lead-developper qui travaille avec vous sur ce projet.
 Attention à bien respecter scrupuleusement le chemin donne par vos routes, sans quoi, vos tests ne pourront s'effectuer convenablement. Si nécessaire, à la suite du speech client et des potentielles notes du lead-developper, vous trouverez les paramètres de la routes si celle ci en a besoin.
-*Sauf indication contraire toutes les routes devront être protegées. (Devra renvoyer une 401 (Unauthorized) si l'utilisateur n'est pas connecté).*
+_Sauf indication contraire toutes les routes devront être protegées. (Devra renvoyer une 401 (Unauthorized) si l'utilisateur n'est pas connecté)._
 
 ### users.controller.ts
 
-#### POST users/auth/sign-up (route publique)
+#### POST users/auth/sign-up (route publique) ✅
 
 Speech client : En tant qu'employé, je veux pouvoir m'inscrire sur le portail afin de pouvoir gérer mon planning ainsi que celui de mon équipe.
 
-*Notes du lead-developper: Pour cette route, tu dois prendre en compte le username, le password et l'email de l'utilisateur. Afin de garantir la validation des données, tu vas devoir mettre en place une validation des paramètres. Il faudrait un mot de passe d'au moins 8 caractères, un email bien formatté et un username d'au moins 3 caractères. Attention à bien gérer l'attribution des roles, ce dernier est facultatif dans la route. Penses à ne jamais renvoyer le mot de passe des utilisateurs, sur aucune route, sinon le patron ne va vraiment pas être content...*
+_Notes du lead-developper: Pour cette route, tu dois prendre en compte le username, le password et l'email de l'utilisateur. Afin de garantir la validation des données, tu vas devoir mettre en place une validation des paramètres. Il faudrait un mot de passe d'au moins 8 caractères, un email bien formatté et un username d'au moins 3 caractères. Attention à bien gérer l'attribution des roles, ce dernier est facultatif dans la route. Penses à ne jamais renvoyer le mot de passe des utilisateurs, sur aucune route, sinon le patron ne va vraiment pas être content..._
 
 ```
 Parametres (body) :
@@ -82,11 +85,11 @@ email!: string;
 role?: 'Employee' | 'Admin' | 'ProjectManager';
 ```
 
-#### POST users/auth/login (route publique)
+#### POST users/auth/login (route publique) ✅
 
 Speech client : En tant qu'employé, je veux pouvoir me connecter sur le portail afin de pouvoir accéder à toutes les fonctionalités qui necessitent une authentification.
 
-*Notes du lead-developper: Tu dois gérer une authentification par email / mot de passe. Ah et penses bien à renvoyer le JWT dans un objet contenant la clé `access_token` pour que le développeur front-end puisse le stocker de son côté et te le renvoyer dans chaque requête qui auront besoin d'une authentification pour fonctionner*
+_Notes du lead-developper: Tu dois gérer une authentification par email / mot de passe. Ah et penses bien à renvoyer le JWT dans un objet contenant la clé `access_token` pour que le développeur front-end puisse le stocker de son côté et te le renvoyer dans chaque requête qui auront besoin d'une authentification pour fonctionner_
 
 ```
 Parametres (body) :
@@ -113,7 +116,7 @@ Speech client : En tant qu'employé, je veux pouvoir voir la liste de tous les u
 
 Speech client : En tant qu'employé, je dois pouvoir afficher, sur la plateforme, mes informations personnelles afin de me rappeler que je suis connecté.
 
-*Notes du lead-developper : Tu peux utiliser le token d'authentification de la requête pour identifier la personne actuellement connectée.* 
+_Notes du lead-developper : Tu peux utiliser le token d'authentification de la requête pour identifier la personne actuellement connectée._
 
 #### GET /users/:id/meal-vouchers/:month
 
@@ -134,19 +137,21 @@ month!: number; //nombres de 1 (Janvier) à 12 (Decembre)
 
 #### GET /projects
 
-Speech client : 
-- En tant qu'*Administrateurs* ou *Chef de projet*, je veux pouvoir voir la liste de tous les projets de l'entreprise. 
-- En tant qu'*Employé*, je veux pouvoir voir uniquement la liste de tous les projets de l'entreprise dans lesquels je suis impliqué. 
+Speech client :
 
-*Employés*
+- En tant qu'_Administrateurs_ ou _Chef de projet_, je veux pouvoir voir la liste de tous les projets de l'entreprise.
+- En tant qu'_Employé_, je veux pouvoir voir uniquement la liste de tous les projets de l'entreprise dans lesquels je suis impliqué.
+
+_Employés_
 
 #### GET /projects/:id
 
-Speech client : 
-- En tant qu'*Administrateurs* ou *Chef de projet*, je veux pouvoir consulter un projet en particulier. 
-- En tant qu'*Employé*, je veux pouvoir voir un projet de l'entreprise dans lequel je suis impliqué. 
+Speech client :
 
-*Notes du lead-developper : Dans le cas où un utilisateur n'a pas le droit de consulter le projet demandé, il faudrait que tu me renvoies une **ForbiddenError***.
+- En tant qu'_Administrateurs_ ou _Chef de projet_, je veux pouvoir consulter un projet en particulier.
+- En tant qu'_Employé_, je veux pouvoir voir un projet de l'entreprise dans lequel je suis impliqué.
+
+\*Notes du lead-developper : Dans le cas où un utilisateur n'a pas le droit de consulter le projet demandé, il faudrait que tu me renvoies une **ForbiddenError\***.
 
 ```
 Parametres (query) :
@@ -156,9 +161,9 @@ id!: string; //au format uuidv4
 
 #### POST /projects
 
-Speech client : En tant qu'*Administrateur*, je veux pouvoir créer un projet en renseignant un nom, une description et un référent qui doit etre *Administrateurs* ou *Chef de projet*.
+Speech client : En tant qu'_Administrateur_, je veux pouvoir créer un projet en renseignant un nom, une description et un référent qui doit etre _Administrateurs_ ou _Chef de projet_.
 
-*Notes du lead-developper : Si une personne essaie de créer un projet sans être administrateur, il faut que tu me renvoies une **UnauthorizedException**. Fais en de même si la personne référente donnée n'est pas au minimum un chef de projet. Penses à mettre en place une validation sur ta route, il faut que le nom du projet contienne au moins 3 caractères. Pour que le portail puisse afficher une modale de succès, il faudrait que tu m'inclues la relation **referringEmployee** dans le retour de la route.*
+_Notes du lead-developper : Si une personne essaie de créer un projet sans être administrateur, il faut que tu me renvoies une **UnauthorizedException**. Fais en de même si la personne référente donnée n'est pas au minimum un chef de projet. Penses à mettre en place une validation sur ta route, il faut que le nom du projet contienne au moins 3 caractères. Pour que le portail puisse afficher une modale de succès, il faudrait que tu m'inclues la relation **referringEmployee** dans le retour de la route._
 
 ```
 Parametres (body) :
@@ -171,18 +176,19 @@ referringEmployeeId!: string; //au format uuidv4
 
 #### GET /project-users
 
-Speech client : 
-- En tant qu'*Administrateurs* ou *Chef de projet*, je veux pouvoir voir toutes les assignations des employés aux différents projets. 
-- En tant qu'*Employé*, je veux pouvoir voir toutes mes assignations aux différents projets. 
+Speech client :
 
+- En tant qu'_Administrateurs_ ou _Chef de projet_, je veux pouvoir voir toutes les assignations des employés aux différents projets.
+- En tant qu'_Employé_, je veux pouvoir voir toutes mes assignations aux différents projets.
 
 #### GET /project-users/:id
 
-Speech client : 
-- En tant qu'*Administrateurs* ou *Chef de projet*, je veux pouvoir voir une assignation en particulier. 
-- En tant qu'*Employé*, je veux pouvoir voir une de mes assignations. 
+Speech client :
 
-*Notes du lead-developper : Dans le cas où tu n'as pas accès à la ressource demandée, penses bien à renvoyer une UnauthorizedException.*
+- En tant qu'_Administrateurs_ ou _Chef de projet_, je veux pouvoir voir une assignation en particulier.
+- En tant qu'_Employé_, je veux pouvoir voir une de mes assignations.
+
+_Notes du lead-developper : Dans le cas où tu n'as pas accès à la ressource demandée, penses bien à renvoyer une UnauthorizedException._
 
 ```
 Parametres (query) :
@@ -192,9 +198,9 @@ id!: string; //au format uuidv4
 
 #### POST /project-users
 
-Speech client : En tant qu'*Administrateurs* ou *Chef de projet*, je dois pouvoir assigner un employé à un projet pour une durée determinée si ce dernier n'est pas déja affecté à un autre projet en même temps.
+Speech client : En tant qu'_Administrateurs_ ou _Chef de projet_, je dois pouvoir assigner un employé à un projet pour une durée determinée si ce dernier n'est pas déja affecté à un autre projet en même temps.
 
-*Notes du lead-developper : Dans le cas où l'employé est déjà affecté à un projet pour la période demandé tu dois me renvoyer une ConflictException. Tout comme dans les autres routes, si un utilisateur n'a pas les droits pour effectuer cette action, il faut que tu me renvoies une UnauthorizedException. Pour que le portail puisse afficher une modale de succès, il faudrait que tu m'inclues les relations **user** et **project** dans le retour de la route.*
+_Notes du lead-developper : Dans le cas où l'employé est déjà affecté à un projet pour la période demandé tu dois me renvoyer une ConflictException. Tout comme dans les autres routes, si un utilisateur n'a pas les droits pour effectuer cette action, il faut que tu me renvoies une UnauthorizedException. Pour que le portail puisse afficher une modale de succès, il faudrait que tu m'inclues les relations **user** et **project** dans le retour de la route._
 
 ```
 Parametres (body) :
@@ -215,7 +221,7 @@ Speech client : En tant qu'utilisateur connecté, je veux pouvoir voir tous les 
 
 Speech client : En tant qu'utilisateur connecté, je veux pouvoir voir les informations d'un évènement en particulier.
 
-*Notes du lead-developper : Penses bien à me renvoyer l'erreur appropriée dans le cas ou l'évènement demandé n'est pas trouvé.*
+_Notes du lead-developper : Penses bien à me renvoyer l'erreur appropriée dans le cas ou l'évènement demandé n'est pas trouvé._
 
 ```
 Parametres (query) :
@@ -225,13 +231,14 @@ id!: string; //au format uuidv4
 
 #### POST /events
 
-Speech client : Je veux que mes utilisateurs puissent poser un évènement de type *Télétravail* ou *Congé payé*. Voici la règlementation actuellement en place au sein de l'entreprise : 
+Speech client : Je veux que mes utilisateurs puissent poser un évènement de type _Télétravail_ ou _Congé payé_. Voici la règlementation actuellement en place au sein de l'entreprise :
+
 - Il est impossible de se mettre en télétravail plus de deux jours par semaine
 - Il est impossible d'avoir deux évènements quel que soit le statut de ce dernier sur la meme journée
 - Les télétravails ne sont pas soumis à validation d'un supérieur
-- Si un *Employé* essaie de créer un évènement de congé, ce dernier est en statut *En attente* et sera soumis à validation d'un supérieur
+- Si un _Employé_ essaie de créer un évènement de congé, ce dernier est en statut _En attente_ et sera soumis à validation d'un supérieur
 
-*Notes du lead-developper : il est impossible de créer un évènement pour quelqu'un d'autre, tu peux déduire le userId via la requête.*
+_Notes du lead-developper : il est impossible de créer un évènement pour quelqu'un d'autre, tu peux déduire le userId via la requête._
 
 ```
 Parametres (body) :
@@ -242,9 +249,11 @@ eventType!: 'RemoteWork' | 'PaidLeave';
 ```
 
 #### POST /events/:id/validate
+
 #### POST /events/:id/decline
 
-Speech client : La validation de congés payes se fait sous certaines conditions : 
+Speech client : La validation de congés payes se fait sous certaines conditions :
+
 - Il est impossible d'altérer le statut d'un projet déjà validé ou refusé
 - Les administrateurs peuvent valider n'importe quelle demande
 - Il n'est possible de traiter un évènement que si l'utilisateur est rattaché à un projet le jour de l'évènement
@@ -258,7 +267,7 @@ id!: string; //au format uuidv4
 
 ### BONUS
 
-- Afin d'être conforme aux consignes delivrés par la CNIL, vous devez tracer toutes les requêtes effectuées sur votre API. Pour ce faire, vous *intercepterez* chaque requête effectuée et écrirez dans un fichier logs.txt une ligne par requête. Une ligne devra contenir : l'ip de la machine ayant fait la requête, la route appelée, les paramètres si ils existent ainsi que la date et l'heure de la requête.
+- Afin d'être conforme aux consignes delivrés par la CNIL, vous devez tracer toutes les requêtes effectuées sur votre API. Pour ce faire, vous _intercepterez_ chaque requête effectuée et écrirez dans un fichier logs.txt une ligne par requête. Une ligne devra contenir : l'ip de la machine ayant fait la requête, la route appelée, les paramètres si ils existent ainsi que la date et l'heure de la requête.
 
 - Afin de faciliter la communication des jours planifiés aux RH, il doit être possible d'exporter un csv contenant la liste de tout les congés acceptés du mois en cours. Une ligne correspondra à un évènement. Sur cette ligne devra également apparaitre le nom et prénom de l'utilisateur ayant pris son congé et le projet auquel ce dernier était rattaché le jour de son congé.
 
