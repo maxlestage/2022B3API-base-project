@@ -24,14 +24,14 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  findOne(id: string): Promise<User> {
+  async findOne(id: string): Promise<User | null> {
     return this.usersRepository.findOneBy({ id: id });
   }
 
   // À verifier :
-  findByIdMealVouchersPerMonth(id: string): Promise<User> {
-    return this.usersRepository.findOneBy({ id: id });
-  }
+  // findByIdMealVouchersPerMonth(id: string): Promise<User> {
+  //   return this.usersRepository.findOneBy({ id: id });
+  // }
 
   findOneByEmail(email: string): Promise<User> {
     return this.usersRepository.findOneBy({ email: email });

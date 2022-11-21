@@ -10,10 +10,15 @@ import {
   ParseUUIDPipe,
   Request,
   UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
 import { LocalAuthGuard } from '../../auth/guards/local-auth.guard';
 import { User } from '../user.entity';
+
+// For LoginUserDTO
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { LoginUserDTO, SignupUserDTO } from '../dto/user.dto';
+
 import { UsersService } from '../services/user.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { AuthService } from '../../auth/services/auth.service';
@@ -25,6 +30,8 @@ export class UsersController {
     private authService: AuthService,
   ) {}
 
+  // Show all users when i'm connected
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll(): Promise<User[]> {
     return this.usersService.findAll();
@@ -38,19 +45,25 @@ export class UsersController {
   }
 
   // Routes ID
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
-    return this.usersService.findOne(id);
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
+    const user = await this.usersService.findOne(id);
+    if (!user) {
+      throw new NotFoundException();
+    }
+    return user;
   }
 
   // Routes :id/meal-vouchers/:month
-  @Get(':id/meal-vouchers/:month')
-  findByIdMealVouchersPerMonth(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<User> {
-    return this.usersService.findOne(id);
-  }
+  // @Get(':id/meal-vouchers/:month')
+  // findByIdMealVouchersPerMonth(
+  //   @Param('id', ParseUUIDPipe) id: string,
+  // ): Promise<User> {
+  //   return this.usersService.findOne(id);
+  // }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string): Promise<void> {
     return this.usersService.remove(id);
