@@ -98,7 +98,7 @@ email!: string;
 password!: string;
 ```
 
-#### GET users/:id
+#### GET users/:id ✅
 
 Speech client : En tant qu'employé, je veux pouvoir voir les informations personnelles d'un utilisateur de la plateforme en particulier.
 
@@ -108,17 +108,17 @@ Parametres (query) :
 id!: string; //au format uuidv4
 ```
 
-#### GET users/
+#### GET users/ ✅
 
 Speech client : En tant qu'employé, je veux pouvoir voir la liste de tous les utilisateurs actuellement inscrits sur la plateforme
 
-#### GET users/me
+#### GET users/me ✅
 
 Speech client : En tant qu'employé, je dois pouvoir afficher, sur la plateforme, mes informations personnelles afin de me rappeler que je suis connecté.
 
 _Notes du lead-developper : Tu peux utiliser le token d'authentification de la requête pour identifier la personne actuellement connectée._
 
-#### GET /users/:id/meal-vouchers/:month
+#### GET /users/:id/meal-vouchers/:month ❌
 
 Speech client : En tant qu'enployé, je dois pouvoir voir le montant accordé en titres restaurant par l'entreprise pour un mois donné afin d'éviter des erreurs comptables dans le calculs des titres restaurants.
 
