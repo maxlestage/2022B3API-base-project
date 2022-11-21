@@ -43,6 +43,14 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  // Routes :id/meal-vouchers/:month
+  @Get(':id/meal-vouchers/:month')
+  findByIdMealVouchersPerMonth(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<User> {
+    return this.usersService.findOne(id);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string): Promise<void> {
     return this.usersService.remove(id);
