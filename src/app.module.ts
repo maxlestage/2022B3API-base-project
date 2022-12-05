@@ -6,11 +6,13 @@ import { UsersModule } from './users/user.module';
 import { User } from './users/user.entity';
 import { ProjectsModule } from './projects/project.module';
 import { Project } from './projects/project.entity';
+import { ProjectUserModule } from './project-users/projectUser.module';
 
 @Module({
   imports: [
     UsersModule,
     ProjectsModule,
+    ProjectUserModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
