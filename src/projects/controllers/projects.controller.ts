@@ -23,11 +23,25 @@ export class ProjectsController {
 
   @UseGuards(JwtAuthGuard)
   @Get('')
-  async findAll(): Promise<Project[]> {
-    console.log('%f', JwtAuthGuard);
-    const projects = await this.projectsService.findAll();
+  async getProject(@Request() req): Promise<Project[]> {
+    const projects = await this.projectsService.getProject(req.user);
     return projects;
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async getProjectById(@Request() req): Promise<Project> {
+    const projects = await this.projectsService.getProjectById(req.user);
+    return projects;
+  }
+
+  // @UseGuards(JwtAuthGuard)
+  // @Get('')
+  // async findAll(): Promise<Project[]> {
+  //   // console.log('%f', JwtAuthGuard);
+  //   const projects = await this.projectsService.findAll();
+  //   return projects;
+  // }
 
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
