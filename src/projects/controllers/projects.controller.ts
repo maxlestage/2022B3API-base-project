@@ -6,6 +6,7 @@ import {
   UseGuards,
   UsePipes,
   ValidationPipe,
+  Request,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { AuthService } from '../../auth/services/auth.service';
@@ -21,16 +22,20 @@ export class ProjectsController {
   ) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get()
+  @Get('')
   async findAll(): Promise<Project[]> {
+    console.log('%f', JwtAuthGuard);
     const projects = await this.projectsService.findAll();
     return projects;
   }
 
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
-  @Post()
-  async create(@Body() ProjectDTO: ProjectDTO): Promise<ProjectDTO> {
-    return await this.projectsService.createProject(ProjectDTO);
+  @Post('')
+  async create(
+    @Body() ProjectDTO: ProjectDTO,
+    @Request() req,
+  ): Promise<ProjectDTO> {
+    return await this.projectsService.createProject(ProjectDTO, req.user);
   }
 }
