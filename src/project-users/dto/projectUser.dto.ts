@@ -1,11 +1,19 @@
-import { IsDate, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import {
+  IsDate,
+  IsDefined,
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class ProjectUserDTO {
   @IsNotEmpty()
+  @IsDefined()
   @IsDate()
   startDate!: Date;
 
   @IsNotEmpty()
+  @IsDefined()
   @IsDate()
   endDate!: Date;
 

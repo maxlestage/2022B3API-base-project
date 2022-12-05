@@ -23,33 +23,21 @@ export class ProjectUserController {
 
   @UseGuards(JwtAuthGuard)
   @Get('')
-  async getProject(@Request() req): Promise<ProjectUser[]> {
-    const projects = await this.projectUserService.getProject(req.user);
+  async getAssignationUser(@Request() req): Promise<ProjectUser[]> {
+    const projects = await this.projectUserService.getAssignation(req.user);
     return projects;
   }
-
-  @UseGuards(JwtAuthGuard)
-  @Get(':id')
-  async getProjectById(@Request() req): Promise<ProjectUser> {
-    const projects = await this.projectUserService.getProjectById(req.user);
-    return projects;
-  }
-
-  // @UseGuards(JwtAuthGuard)
-  // @Get('')
-  // async findAll(): Promise<Project[]> {
-  //   // console.log('%f', JwtAuthGuard);
-  //   const projects = await this.projectsService.findAll();
-  //   return projects;
-  // }
 
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
   @Post('')
-  async create(
+  async createAssignationUser(
     @Body() ProjectUserDTO: ProjectUserDTO,
     @Request() req,
   ): Promise<ProjectUserDTO> {
-    return await this.projectUserService.createProject(ProjectDTO, req.user);
+    return await this.projectUserService.assignationUser(
+      ProjectUserDTO,
+      req.user,
+    );
   }
 }
