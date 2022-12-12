@@ -37,39 +37,28 @@ export class ProjectUserService {
   // projectId!: string; //au format uuidv4
   // ```
 
-  async assignationUser(
+  async createAssignationUser(
     ProjectUserDTO: ProjectUserDTO,
     user: Omit<User, 'password'>,
   ): Promise<ProjectUser> {
-    if (user.role === 'Admin' || 'ProjectManager') {
-      if (user.role === 'Employee') {
-      }
-      const projectAssign = new ProjectUser();
-      projectAssign.userId = ProjectUserDTO.userId;
-      projectAssign.startDate = ProjectUserDTO.startDate;
-      projectAssign.endDate = ProjectUserDTO.endDate;
-      return this.projectUserRepository.save(projectAssign);
-    }
-  }
+    const checkUser: Promise<ProjectUser[]> = this.projectUserRepository.findBy(
+      { userId: ProjectUserDTO.userId },
+    );
 
-  // async createProject(
-  //   ProjectDTO: ProjectDTO,
-  //   user: Omit<User, 'password'>,
-  // ): Promise<Project> {
-  //   if (user.role === 'Admin') {
-  //     if (
-  //       (await this.usersService.findOne(ProjectDTO.referringEmployeeId))
-  //         .role === ('ProjectManager' || 'Admin')
-  //     ) {
-  //       const project = new Project();
-  //       project.name = ProjectDTO.name;
-  //       project.referringEmployeeId = ProjectDTO.referringEmployeeId;
-  //       return this.projectRepository.save(project);
-  //     } else {
-  //       throw new UnauthorizedException();
-  //     }
-  //   } else {
-  //     throw new UnauthorizedException();
-  //   }
-  // }
+    console.log(checkUser);
+    // if (user.role === 'Admin' || 'ProjectManager') {
+    const projectAssign = new ProjectUser();
+
+    //   if (checkUser) {
+    //   }
+
+    //   if (ProjectUserDTO.userId !== projectAssign.userId) {
+    projectAssign.userId = ProjectUserDTO.userId;
+    projectAssign.startDate = ProjectUserDTO.startDate;
+    projectAssign.endDate = ProjectUserDTO.endDate;
+    //   }
+
+    return this.projectUserRepository.save(projectAssign);
+    // }
+  }
 }

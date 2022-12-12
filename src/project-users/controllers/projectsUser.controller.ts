@@ -35,7 +35,7 @@ export class ProjectUserController {
     @Body() ProjectUserDTO: ProjectUserDTO,
     @Request() req,
   ): Promise<ProjectUserDTO> {
-    return await this.projectUserService.assignationUser(
+    return await this.projectUserService.createAssignationUser(
       ProjectUserDTO,
       req.user,
     );
