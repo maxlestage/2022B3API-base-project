@@ -46,19 +46,18 @@ export class ProjectUserService {
     );
 
     console.log(checkUser);
-    // if (user.role === 'Admin' || 'ProjectManager') {
-    const projectAssign = new ProjectUser();
+    if (user.role === 'Admin' || 'ProjectManager') {
+      const projectAssign = new ProjectUser();
+      if (checkUser) {
+      }
 
-    //   if (checkUser) {
-    //   }
+      if (ProjectUserDTO.userId !== projectAssign.userId) {
+        projectAssign.userId = ProjectUserDTO.userId;
+        projectAssign.startDate = ProjectUserDTO.startDate;
+        projectAssign.endDate = ProjectUserDTO.endDate;
+      }
 
-    //   if (ProjectUserDTO.userId !== projectAssign.userId) {
-    projectAssign.userId = ProjectUserDTO.userId;
-    projectAssign.startDate = ProjectUserDTO.startDate;
-    projectAssign.endDate = ProjectUserDTO.endDate;
-    //   }
-
-    return this.projectUserRepository.save(projectAssign);
-    // }
+      return this.projectUserRepository.save(projectAssign);
+    }
   }
 }
