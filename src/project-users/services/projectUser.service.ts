@@ -2,15 +2,20 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UsersService } from '../../users/services/user.service';
+import { ProjectsService } from '../../projects/services/project.service';
 import { User } from '../../users/user.entity';
 import { ProjectUserDTO } from '../dto/projectUser.dto';
 import { ProjectUser } from '../projectUser.entity';
+import * as dayjs from 'dayjs';
+import isBetween = require('dayjs/plugin/isBetween');
+dayjs.extend(isBetween);
 
 @Injectable()
 export class ProjectUserService {
   constructor(
     @InjectRepository(ProjectUser)
     private readonly projectUserRepository: Repository<ProjectUser>,
+    private readonly projectsService: ProjectsService,
     private readonly usersService: UsersService,
   ) {}
 
@@ -41,23 +46,47 @@ export class ProjectUserService {
     ProjectUserDTO: ProjectUserDTO,
     user: Omit<User, 'password'>,
   ): Promise<ProjectUser> {
-    const checkUser: Promise<ProjectUser[]> = this.projectUserRepository.findBy(
-      { userId: ProjectUserDTO.userId },
-    );
-
-    console.log(checkUser);
-    if (user.role === 'Admin' || 'ProjectManager') {
-      const projectAssign = new ProjectUser();
-      if (checkUser) {
-      }
-
-      if (ProjectUserDTO.userId !== projectAssign.userId) {
-        projectAssign.userId = ProjectUserDTO.userId;
-        projectAssign.startDate = ProjectUserDTO.startDate;
-        projectAssign.endDate = ProjectUserDTO.endDate;
-      }
-
-      return this.projectUserRepository.save(projectAssign);
+    if (user.role === 'Employee') {
+      throw new UnauthorizedException();
     }
+
+    const existingProjectUser: ProjectUser[] =
+      await this.projectUserRepository.find();
+
+    const allProjectId = existingProjectUser.map((projectUser: ProjectUser) => {
+      return {
+        id: projectUser.projectId,
+        start: projectUser.startDate,
+        end: projectUser.endDate,
+      };
+    });
+
+    for (let index = 0; index < allProjectId.length; index++) {
+      if (
+        dayjs(ProjectUserDTO.startDate).isBetween(
+          allProjectId[index].start,
+          allProjectId[index].end,
+        )
+      ) {
+        throw new Error();
+      }
+
+      if (dayjs(ProjectUserDTO.startDate).isBefore(allProjectId[index].end)) {
+        throw new Error();
+      }
+
+      if (dayjs(ProjectUserDTO.startDate).isAfter(allProjectId[index].end)) {
+        throw new Error();
+      }
+    }
+
+    // console.log('allProjectId : %j', allProjectId);
+
+    const projectAssign = new ProjectUser();
+    projectAssign.userId = ProjectUserDTO.userId;
+    projectAssign.projectId = ProjectUserDTO.projectId;
+    projectAssign.startDate = ProjectUserDTO.startDate;
+    projectAssign.endDate = ProjectUserDTO.endDate;
+    return this.projectUserRepository.save(projectAssign);
   }
 }

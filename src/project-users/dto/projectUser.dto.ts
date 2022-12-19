@@ -1,5 +1,5 @@
 import {
-  IsDate,
+  IsDateString,
   IsDefined,
   IsNotEmpty,
   IsString,
@@ -9,12 +9,12 @@ import {
 export class ProjectUserDTO {
   @IsNotEmpty()
   @IsDefined()
-  @IsDate()
+  @IsDateString()
   startDate!: Date;
 
   @IsNotEmpty()
   @IsDefined()
-  @IsDate()
+  @IsDateString()
   endDate!: Date;
 
   @IsNotEmpty()

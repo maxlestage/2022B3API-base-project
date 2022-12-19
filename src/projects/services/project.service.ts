@@ -40,7 +40,6 @@ export class ProjectsService {
   }
 
   async getProject(user: Omit<User, 'password'>): Promise<Project[]> {
-    console.log(user.role);
     if (user.role === ('ProjectManager' || 'Admin')) {
       return this.projectRepository.find();
     } else if (user.role !== ('ProjectManager' || 'Admin')) {
@@ -51,7 +50,6 @@ export class ProjectsService {
   }
 
   getProjectById(user: Omit<User, 'password'>): Promise<Project> {
-    console.log(user.role);
     if (user.role === ('ProjectManager' || 'Admin')) {
       return this.projectRepository.findOneBy({
         id: user.id,

@@ -13,11 +13,14 @@ import { AuthService } from '../../auth/services/auth.service';
 import { ProjectUserService } from '../services/projectUser.service';
 import { ProjectUser } from '../projectUser.entity';
 import { ProjectUserDTO } from '../dto/projectUser.dto';
+import { ProjectDTO } from '../../projects/dto/project.dto';
+import { ProjectsService } from '../../projects/services/project.service';
 
 @Controller('project-users')
 export class ProjectUserController {
   constructor(
     private readonly projectUserService: ProjectUserService,
+    private readonly project: ProjectsService,
     private authService: AuthService,
   ) {}
 
@@ -33,6 +36,7 @@ export class ProjectUserController {
   @Post('')
   async createAssignationUser(
     @Body() ProjectUserDTO: ProjectUserDTO,
+    ProjectDTO: ProjectDTO,
     @Request() req,
   ): Promise<ProjectUserDTO> {
     return await this.projectUserService.createAssignationUser(
