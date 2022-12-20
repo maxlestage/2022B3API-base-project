@@ -49,7 +49,7 @@ export class ProjectUserService {
   // ```
 
   async createAssignationUser(
-    ProjectUserDTO: ProjectUserDTO,
+    projectUserDTO: ProjectUserDTO,
     user: Omit<User, 'password'>,
   ): Promise<ProjectUser> {
     if (user.role === 'Employee') {
@@ -58,9 +58,13 @@ export class ProjectUserService {
 
     if (
       this.projectUserRepository.findOneBy({
-        projectId: ProjectUserDTO.projectId,
+        projectId: projectUserDTO.projectId,
       })
     ) {
+      console.log(' projectId: projectUserDTO.projectId = %o', {
+        projectId: projectUserDTO.projectId,
+      });
+
       throw new NotFoundException();
     }
 
@@ -81,7 +85,7 @@ export class ProjectUserService {
 
     for (let index = 0; index < allProjectId.length; index++) {
       if (
-        dayjs(ProjectUserDTO.startDate).isBetween(
+        dayjs(projectUserDTO.startDate).isBetween(
           allProjectId[index].start,
           allProjectId[index].end,
         )
@@ -89,11 +93,11 @@ export class ProjectUserService {
         throw new ConflictException();
       }
 
-      if (dayjs(ProjectUserDTO.startDate).isBefore(allProjectId[index].end)) {
+      if (dayjs(projectUserDTO.startDate).isBefore(allProjectId[index].end)) {
         throw new ConflictException();
       }
 
-      if (dayjs(ProjectUserDTO.startDate).isAfter(allProjectId[index].end)) {
+      if (dayjs(projectUserDTO.startDate).isAfter(allProjectId[index].end)) {
         throw new ConflictException();
       }
     }
@@ -101,10 +105,10 @@ export class ProjectUserService {
     // console.log('allProjectId : %j', allProjectId);
 
     const projectAssign = new ProjectUser();
-    projectAssign.userId = ProjectUserDTO.userId;
-    projectAssign.projectId = ProjectUserDTO.projectId;
-    projectAssign.startDate = ProjectUserDTO.startDate;
-    projectAssign.endDate = ProjectUserDTO.endDate;
+    projectAssign.userId = projectUserDTO.userId;
+    projectAssign.projectId = projectUserDTO.projectId;
+    projectAssign.startDate = projectUserDTO.startDate;
+    projectAssign.endDate = projectUserDTO.endDate;
     return this.projectUserRepository.save(projectAssign);
   }
 }
