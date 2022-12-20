@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UsersService } from '../../users/services/user.service';
@@ -7,7 +12,8 @@ import { User } from '../../users/user.entity';
 import { ProjectUserDTO } from '../dto/projectUser.dto';
 import { ProjectUser } from '../projectUser.entity';
 import * as dayjs from 'dayjs';
-import isBetween = require('dayjs/plugin/isBetween');
+import * as isBetween from 'dayjs/plugin/isBetween';
+
 dayjs.extend(isBetween);
 
 @Injectable()
@@ -50,6 +56,18 @@ export class ProjectUserService {
       throw new UnauthorizedException();
     }
 
+    if (
+      this.projectUserRepository.findOneBy({
+        projectId: ProjectUserDTO.projectId,
+      })
+    ) {
+      throw new NotFoundException();
+    }
+
+    if (this.projectUserRepository.findOneBy({ userId: user.id })) {
+      throw new NotFoundException();
+    }
+
     const existingProjectUser: ProjectUser[] =
       await this.projectUserRepository.find();
 
@@ -68,15 +86,15 @@ export class ProjectUserService {
           allProjectId[index].end,
         )
       ) {
-        throw new Error();
+        throw new ConflictException();
       }
 
       if (dayjs(ProjectUserDTO.startDate).isBefore(allProjectId[index].end)) {
-        throw new Error();
+        throw new ConflictException();
       }
 
       if (dayjs(ProjectUserDTO.startDate).isAfter(allProjectId[index].end)) {
-        throw new Error();
+        throw new ConflictException();
       }
     }
 
