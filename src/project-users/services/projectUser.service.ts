@@ -57,48 +57,89 @@ export class ProjectUserService {
     }
 
     if (
-      await this.projectUserRepository.findOneBy({
+      !(await this.projectUserRepository.findOneBy({
         projectId: projectUserDTO.projectId,
-      })
+      }))
     ) {
       throw new NotFoundException();
     }
 
     if (
-      await this.projectUserRepository.findOneBy({
+      !(await this.projectUserRepository.findOneBy({
         userId: projectUserDTO.userId,
-      })
+      }))
     ) {
       throw new NotFoundException();
     }
 
     const existingProjectUser: ProjectUser[] =
-      await this.projectUserRepository.find();
+      await this.projectUserRepository.findBy({
+        userId: projectUserDTO.userId,
+      });
 
-    const allProjectId = existingProjectUser.map((projectUser: ProjectUser) => {
-      return {
-        id: projectUser.projectId,
-        start: projectUser.startDate,
-        end: projectUser.endDate,
-      };
-    });
+    console.log('existingProjectUser : %o', existingProjectUser);
 
-    console.log('allProjectId : %j', allProjectId.length);
+    const allProjectUser = existingProjectUser.map(
+      (projectUser: ProjectUser) => {
+        return {
+          id: projectUser.projectId,
+          start: projectUser.startDate,
+          end: projectUser.endDate,
+          userId: projectUserDTO.userId,
+        };
+      },
+    );
+    console.log('toto');
+    console.log('allProjectUser : %o', allProjectUser);
 
-    for (let index = 0; index <= allProjectId.length; index++) {
+    for (let index = 0; index <= allProjectUser.length; index++) {
+      console.log('toto');
+
       if (
         dayjs(projectUserDTO.startDate).isBetween(
-          allProjectId[index].start,
-          allProjectId[index].end,
-        ) ||
-        dayjs(projectUserDTO.endDate).isBetween(
-          allProjectId[index].start,
-          allProjectId[index].end,
+          allProjectUser[index].start,
+          allProjectUser[index].end,
         )
-        // dayjs(projectUserDTO.startDate).isBefore(allProjectId[index].end) ||
-        // dayjs(projectUserDTO.startDate).isAfter(allProjectId[index].end)
-      )
-        throw new ConflictException();
+      ) {
+        // throw new ConflictException();
+        console.log(
+          'Premier cas isBetween %o',
+          dayjs(projectUserDTO.startDate).isBetween(
+            allProjectUser[index].start,
+            allProjectUser[index].end,
+          ),
+        );
+      }
+      if (
+        dayjs(projectUserDTO.endDate).isBetween(
+          allProjectUser[index].start,
+          allProjectUser[index].end,
+        )
+      ) {
+        console.log(
+          'Second cas isBetween %o',
+          dayjs(projectUserDTO.endDate).isBetween(
+            allProjectUser[index].start,
+            allProjectUser[index].end,
+          ),
+        );
+      }
+
+      if (
+        dayjs(projectUserDTO.startDate).isBefore(allProjectUser[index].start)
+      ) {
+        console.log(
+          'Troisième cas isBefore %o',
+          dayjs(projectUserDTO.startDate).isBefore(allProjectUser[index].start),
+        );
+      }
+
+      if (dayjs(projectUserDTO.endDate).isAfter(allProjectUser[index].end)) {
+        console.log(
+          'Quatrième cas isAfter %o',
+          dayjs(projectUserDTO.endDate).isAfter(allProjectUser[index].end),
+        );
+      }
     }
 
     const projectAssign = new ProjectUser();
