@@ -13,6 +13,7 @@ import { ProjectUserDTO } from '../dto/projectUser.dto';
 import { ProjectUser } from '../projectUser.entity';
 import * as dayjs from 'dayjs';
 import * as isBetween from 'dayjs/plugin/isBetween';
+import { Project } from '../../projects/project.entity';
 
 dayjs.extend(isBetween);
 
@@ -35,19 +36,6 @@ export class ProjectUserService {
     }
   }
 
-  //   Speech client : En tant qu'_Administrateurs_ ou _Chef de projet_, je dois pouvoir assigner un employé à un projet pour une durée determinée si ce dernier n'est pas déja affecté à un autre projet en même temps.
-
-  // _Notes du lead-developper : Dans le cas où l'employé est déjà affecté à un projet pour la période demandé tu dois me renvoyer une ConflictException. Tout comme dans les autres routes, si un utilisateur n'a pas les droits pour effectuer cette action, il faut que tu me renvoies une UnauthorizedException. Pour que le portail puisse afficher une modale de succès, il faudrait que tu m'inclues les relations **user** et **project** dans le retour de la route._
-
-  // ```
-  // Parametres (body) :
-
-  // startDate!: Date;
-  // endDate!: Date;
-  // userId!: string; //au format uuidv4
-  // projectId!: string; //au format uuidv4
-  // ```
-
   async createAssignationUser(
     projectUserDTO: ProjectUserDTO,
     user: Omit<User, 'password'>,
@@ -56,19 +44,28 @@ export class ProjectUserService {
       throw new UnauthorizedException();
     }
 
-    if (
-      !(await this.projectUserRepository.findOneBy({
-        projectId: projectUserDTO.projectId,
-      }))
-    ) {
+    const findProject: Project[] = await this.projectsService.findAll();
+    // console.log('findProject: %o', findProject);
+
+    const projectId: string[] = findProject.map((project) => {
+      return project.referringEmployeeId;
+    });
+    console.log('projectId: %o', projectId);
+
+    if (!findProject) {
+      console.log('controlle found findProject, il plante ');
       throw new NotFoundException();
     }
 
-    if (
-      !(await this.projectUserRepository.findOneBy({
-        userId: projectUserDTO.userId,
-      }))
-    ) {
+    const findUser: User[] = await this.usersService.findAll();
+    // console.log('findUserId: %o', findUser);
+    const userId: string[] = findProject.map((user) => {
+      return user.id;
+    });
+    console.log('userId: %o', userId);
+
+    if (!findUser) {
+      console.log('controlle found findUser, il plante');
       throw new NotFoundException();
     }
 
