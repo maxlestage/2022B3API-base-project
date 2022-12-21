@@ -57,18 +57,18 @@ export class ProjectUserService {
     }
 
     if (
-      this.projectUserRepository.findOneBy({
+      await this.projectUserRepository.findOneBy({
         projectId: projectUserDTO.projectId,
       })
     ) {
-      console.log(' projectId: projectUserDTO.projectId = %o', {
-        projectId: projectUserDTO.projectId,
-      });
-
       throw new NotFoundException();
     }
 
-    if (this.projectUserRepository.findOneBy({ userId: user.id })) {
+    if (
+      await this.projectUserRepository.findOneBy({
+        userId: projectUserDTO.userId,
+      })
+    ) {
       throw new NotFoundException();
     }
 
@@ -83,32 +83,30 @@ export class ProjectUserService {
       };
     });
 
-    for (let index = 0; index < allProjectId.length; index++) {
+    console.log('allProjectId : %j', allProjectId.length);
+
+    for (let index = 0; index <= allProjectId.length; index++) {
       if (
         dayjs(projectUserDTO.startDate).isBetween(
           allProjectId[index].start,
           allProjectId[index].end,
+        ) ||
+        dayjs(projectUserDTO.endDate).isBetween(
+          allProjectId[index].start,
+          allProjectId[index].end,
         )
-      ) {
+        // dayjs(projectUserDTO.startDate).isBefore(allProjectId[index].end) ||
+        // dayjs(projectUserDTO.startDate).isAfter(allProjectId[index].end)
+      )
         throw new ConflictException();
-      }
-
-      if (dayjs(projectUserDTO.startDate).isBefore(allProjectId[index].end)) {
-        throw new ConflictException();
-      }
-
-      if (dayjs(projectUserDTO.startDate).isAfter(allProjectId[index].end)) {
-        throw new ConflictException();
-      }
     }
-
-    // console.log('allProjectId : %j', allProjectId);
 
     const projectAssign = new ProjectUser();
     projectAssign.userId = projectUserDTO.userId;
     projectAssign.projectId = projectUserDTO.projectId;
     projectAssign.startDate = projectUserDTO.startDate;
     projectAssign.endDate = projectUserDTO.endDate;
-    return this.projectUserRepository.save(projectAssign);
+
+    return await this.projectUserRepository.save(projectAssign);
   }
 }

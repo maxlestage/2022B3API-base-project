@@ -35,12 +35,12 @@ export class ProjectUserController {
   @UsePipes(ValidationPipe)
   @Post('')
   async createAssignationUser(
-    @Body() ProjectUserDTO: ProjectUserDTO,
-    ProjectDTO: ProjectDTO,
+    @Body() projectUserDTO: ProjectUserDTO,
+    projectDTO: ProjectDTO,
     @Request() req,
   ): Promise<ProjectUserDTO> {
     return await this.projectUserService.createAssignationUser(
-      ProjectUserDTO,
+      projectUserDTO,
       req.user,
     );
   }
