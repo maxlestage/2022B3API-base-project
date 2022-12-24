@@ -25,6 +25,13 @@ export class ProjectUserController {
   ) {}
 
   @UseGuards(JwtAuthGuard)
+  @Get('/id')
+  async getAssignationUser(@Request() req): Promise<ProjectUser[]> {
+    const projects = await this.projectUserService.getAssignation(req.user);
+    return projects;
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('')
   async getAssignationUser(@Request() req): Promise<ProjectUser[]> {
     const projects = await this.projectUserService.getAssignation(req.user);
@@ -39,7 +46,7 @@ export class ProjectUserController {
     projectDTO: ProjectDTO,
     @Request() req,
   ): Promise<ProjectUserDTO> {
-    return await this.projectUserService.createAssignationUser(
+    return await this.projectUserService.assignUserToProject(
       projectUserDTO,
       req.user,
     );
