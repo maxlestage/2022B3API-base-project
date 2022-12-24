@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -61,10 +62,7 @@ export class ProjectsService {
     }
   }
 
-  async getProjectById(
-    id: string,
-    user: Omit<User, 'password'>,
-  ): Promise<Project> {
+  async getProjectById(id: string, user: Omit<User, 'password'>) {
     if (user.role === 'Admin' || user.role === 'ProjectManager') {
       const project = await this.projectRepository.findOneById(id);
       if (!project) {
@@ -72,10 +70,16 @@ export class ProjectsService {
       }
       return project;
     } else if (user.role === 'Employee') {
-      const project = await this.projectRepository.findOneBy({
-        id,
-        referringEmployeeId: user.id,
+      const projectUser = await this.projectUserRepository.findOne({
+        where: {
+          projectId: id,
+          userId: user.id,
+        },
       });
+      if (!projectUser) {
+        throw new ForbiddenException('Project not found');
+      }
+      const project = await this.projectRepository.findOneById(id);
       if (!project) {
         throw new NotFoundException('Project not found');
       }

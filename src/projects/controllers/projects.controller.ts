@@ -19,18 +19,18 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('')
-  async getProjects(@Request() req): Promise<Project[]> {
-    return await this.projectsService.getProject(req.user);
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getProjectById(
     @Param('id') id: string,
     @Request() req,
   ): Promise<Project> {
     return await this.projectsService.getProjectById(id, req.user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('')
+  async getProjects(@Request() req): Promise<Project[]> {
+    return await this.projectsService.getProject(req.user);
   }
 
   @UseGuards(JwtAuthGuard)
