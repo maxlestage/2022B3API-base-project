@@ -27,13 +27,38 @@ export class ProjectUserService {
   ) {}
 
   async getAssignation(user: Omit<User, 'password'>): Promise<ProjectUser[]> {
-    if (user.role === 'Admin' || 'ProjectManager') {
+    if (user.role === 'Admin' || user.role === 'ProjectManager') {
       return this.projectUserRepository.find();
     } else if (user.role === 'Employee') {
-      return this.projectUserRepository.findBy({ userId: user.id });
+      const projectUsers = await this.projectUserRepository.findBy({
+        userId: user.id,
+      });
+
+      if (!projectUsers || projectUsers.length === 0) {
+        throw new NotFoundException(
+          'No project-user assignments found for user',
+        );
+      }
+
+      return projectUsers;
     } else {
       throw new UnauthorizedException();
     }
+  }
+
+  async getAssignationById(
+    id: string,
+    user: Omit<User, 'password'>,
+  ): Promise<ProjectUser> {
+    const projectUser = await this.projectUserRepository.findOneById(id);
+
+    if (user.role === 'Employee') {
+      throw new UnauthorizedException();
+    }
+    if (!projectUser) {
+      throw new NotFoundException('Project-user assignment not found');
+    }
+    return projectUser;
   }
 
   async assignUserToProject(

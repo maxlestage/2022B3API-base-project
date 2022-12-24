@@ -7,6 +7,9 @@ import {
   UsePipes,
   ValidationPipe,
   Request,
+  UnauthorizedException,
+  Param,
+  NotFoundException,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { AuthService } from '../../auth/services/auth.service';
@@ -25,17 +28,40 @@ export class ProjectUserController {
   ) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('/id')
-  async getAssignationUser(@Request() req): Promise<ProjectUser[]> {
-    const projects = await this.projectUserService.getAssignation(req.user);
-    return projects;
+  @Get(':id')
+  async getAssignationById(
+    @Param('id') id: string,
+    @Request() req,
+  ): Promise<ProjectUserDTO> {
+    try {
+      const projectUser = await this.projectUserService.getAssignationById(
+        id,
+        req.user,
+      );
+      if (req.user.role === 'Employee' && projectUser.userId !== req.user.id) {
+        throw new UnauthorizedException();
+      }
+      return projectUser;
+    } catch (error) {
+      throw new UnauthorizedException();
+    }
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('')
   async getAssignationUser(@Request() req): Promise<ProjectUser[]> {
-    const projects = await this.projectUserService.getAssignation(req.user);
-    return projects;
+    try {
+      const projectUsers = await this.projectUserService.getAssignation(
+        req.user,
+      );
+      return projectUsers;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return [];
+      } else {
+        throw error;
+      }
+    }
   }
 
   @UseGuards(JwtAuthGuard)
