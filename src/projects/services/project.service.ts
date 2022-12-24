@@ -1,9 +1,14 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { UsersService } from '../../users/services/user.service';
 import { User } from '../../users/user.entity';
 import { ProjectDTO } from '../dto/project.dto';
+import { ProjectUser } from '../../project-users/projectUser.entity';
 import { Project } from '../project.entity';
 
 @Injectable()
@@ -12,8 +17,9 @@ export class ProjectsService {
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
     private readonly usersService: UsersService,
+    @InjectRepository(ProjectUser)
+    private readonly projectUserRepository: Repository<ProjectUser>,
   ) {}
-
   findAll(): Promise<Project[]> {
     return this.projectRepository.find();
   }
@@ -40,24 +46,40 @@ export class ProjectsService {
   }
 
   async getProject(user: Omit<User, 'password'>): Promise<Project[]> {
-    if (user.role === ('ProjectManager' || 'Admin')) {
+    if (user.role === 'ProjectManager' || user.role === 'Admin') {
       return this.projectRepository.find();
-    } else if (user.role !== ('ProjectManager' || 'Admin')) {
-      return this.projectRepository.findBy({ id: user.id });
+    } else if (user.role === 'Employee') {
+      const projectUsers = await this.projectUserRepository.findBy({
+        userId: user.id,
+      });
+      const projectIds = projectUsers.map(
+        (projectUser) => projectUser.projectId,
+      );
+      return this.projectRepository.findBy({ id: In(projectIds) });
     } else {
       throw new UnauthorizedException();
     }
   }
 
-  getProjectById(user: Omit<User, 'password'>): Promise<Project> {
-    if (user.role === ('ProjectManager' || 'Admin')) {
-      return this.projectRepository.findOneBy({
-        id: user.id,
+  async getProjectById(
+    id: string,
+    user: Omit<User, 'password'>,
+  ): Promise<Project> {
+    if (user.role === 'Admin' || user.role === 'ProjectManager') {
+      const project = await this.projectRepository.findOneById(id);
+      if (!project) {
+        throw new NotFoundException('Project not found');
+      }
+      return project;
+    } else if (user.role === 'Employee') {
+      const project = await this.projectRepository.findOneBy({
+        id,
+        referringEmployeeId: user.id,
       });
-    } else if (user.role !== ('ProjectManager' || 'Admin')) {
-      return this.projectRepository.findOneBy({
-        id: user.id,
-      });
+      if (!project) {
+        throw new NotFoundException('Project not found');
+      }
+      return project;
     } else {
       throw new UnauthorizedException();
     }

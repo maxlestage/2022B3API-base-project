@@ -7,41 +7,31 @@ import {
   UsePipes,
   ValidationPipe,
   Request,
+  Param,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { AuthService } from '../../auth/services/auth.service';
 import { Project } from '../project.entity';
 import { ProjectsService } from '../services/project.service';
 import { ProjectDTO } from '../dto/project.dto';
 
 @Controller('projects')
 export class ProjectsController {
-  constructor(
-    private readonly projectsService: ProjectsService /* usersService: UsersService, */,
-    private authService: AuthService,
-  ) {}
+  constructor(private readonly projectsService: ProjectsService) {}
 
   @UseGuards(JwtAuthGuard)
   @Get('')
-  async getProject(@Request() req): Promise<Project[]> {
-    const projects = await this.projectsService.getProject(req.user);
-    return projects;
+  async getProjects(@Request() req): Promise<Project[]> {
+    return await this.projectsService.getProject(req.user);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async getProjectById(@Request() req): Promise<Project> {
-    const projects = await this.projectsService.getProjectById(req.user);
-    return projects;
+  async getProjectById(
+    @Param('id') id: string,
+    @Request() req,
+  ): Promise<Project> {
+    return await this.projectsService.getProjectById(id, req.user);
   }
-
-  // @UseGuards(JwtAuthGuard)
-  // @Get('')
-  // async findAll(): Promise<Project[]> {
-  //   // console.log('%f', JwtAuthGuard);
-  //   const projects = await this.projectsService.findAll();
-  //   return projects;
-  // }
 
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
