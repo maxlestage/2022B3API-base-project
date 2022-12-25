@@ -12,20 +12,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { AuthService } from '../../auth/services/auth.service';
 import { ProjectUserService } from '../services/projectUser.service';
 import { ProjectUser } from '../projectUser.entity';
 import { ProjectUserDTO } from '../dto/projectUser.dto';
 import { ProjectDTO } from '../../projects/dto/project.dto';
-import { ProjectsService } from '../../projects/services/project.service';
 
 @Controller('project-users')
 export class ProjectUserController {
-  constructor(
-    private readonly projectUserService: ProjectUserService,
-    private readonly project: ProjectsService,
-    private authService: AuthService,
-  ) {}
+  constructor(private readonly projectUserService: ProjectUserService) {}
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
