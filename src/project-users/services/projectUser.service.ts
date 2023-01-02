@@ -30,9 +30,10 @@ export class ProjectUserService {
     if (user.role === 'Admin' || user.role === 'ProjectManager') {
       return this.projectUserRepository.find();
     } else if (user.role === 'Employee') {
-      const projectUsers = await this.projectUserRepository.findBy({
-        userId: user.id,
-      });
+      const projectUsers: ProjectUser[] =
+        await this.projectUserRepository.findBy({
+          userId: user.id,
+        });
 
       if (!projectUsers || projectUsers.length === 0) {
         throw new NotFoundException(
