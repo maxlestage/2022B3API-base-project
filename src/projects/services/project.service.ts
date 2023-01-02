@@ -55,7 +55,7 @@ export class ProjectsService {
           userId: user.id,
         });
       const projectIds: string[] = projectUsers.map(
-        (projectUser) => projectUser.projectId,
+        (projectUser: ProjectUser) => projectUser.projectId,
       );
       return this.projectRepository.findBy({ id: In(projectIds) });
     } else {

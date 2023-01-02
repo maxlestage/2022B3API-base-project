@@ -28,11 +28,6 @@ export class UsersService {
     return this.usersRepository.findOneBy({ id: id });
   }
 
-  // À verifier :
-  // findByIdMealVouchersPerMonth(id: string): Promise<User> {
-  //   return this.usersRepository.findOneBy({ id: id });
-  // }
-
   findOneByEmail(email: string): Promise<User> {
     return this.usersRepository.findOneBy({ email: email });
   }
