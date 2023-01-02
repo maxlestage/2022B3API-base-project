@@ -50,10 +50,11 @@ export class ProjectsService {
     if (user.role === 'ProjectManager' || user.role === 'Admin') {
       return this.projectRepository.find();
     } else if (user.role === 'Employee') {
-      const projectUsers = await this.projectUserRepository.findBy({
-        userId: user.id,
-      });
-      const projectIds = projectUsers.map(
+      const projectUsers: ProjectUser[] =
+        await this.projectUserRepository.findBy({
+          userId: user.id,
+        });
+      const projectIds: string[] = projectUsers.map(
         (projectUser) => projectUser.projectId,
       );
       return this.projectRepository.findBy({ id: In(projectIds) });
@@ -62,7 +63,10 @@ export class ProjectsService {
     }
   }
 
-  async getProjectById(id: string, user: Omit<User, 'password'>) {
+  async getProjectById(
+    id: string,
+    user: Omit<User, 'password'>,
+  ): Promise<Project> {
     if (user.role === 'Admin' || user.role === 'ProjectManager') {
       const project = await this.projectRepository.findOneById(id);
       if (!project) {

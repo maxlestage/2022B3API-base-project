@@ -13,6 +13,7 @@ import { ProjectUserDTO } from '../dto/projectUser.dto';
 import { ProjectUser } from '../projectUser.entity';
 import * as dayjs from 'dayjs';
 import * as isBetween from 'dayjs/plugin/isBetween';
+import { Project } from '../../projects/project.entity';
 // import { Project } from '../../projects/project.entity';
 
 dayjs.extend(isBetween);
@@ -74,10 +75,16 @@ export class ProjectUserService {
       this.usersService.findAll(),
     ]);
 
-    if (!users.find((user) => user.id === projectUserDTO.userId)) {
+    if (
+      !users.find((user: User): boolean => user.id === projectUserDTO.userId)
+    ) {
       throw new NotFoundException('User not found');
     }
-    if (!projects.find((project) => project.id === projectUserDTO.projectId)) {
+    if (
+      !projects.find(
+        (project: Project): boolean => project.id === projectUserDTO.projectId,
+      )
+    ) {
       throw new NotFoundException('Project not found');
     }
 
@@ -87,7 +94,7 @@ export class ProjectUserService {
       });
 
     if (
-      existingProjectAssignments.some((assignment) => {
+      existingProjectAssignments.some((assignment): boolean => {
         return (
           dayjs(projectUserDTO.startDate).isBetween(
             assignment.startDate,
